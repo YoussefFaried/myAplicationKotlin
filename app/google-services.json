@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "660450710898",
+    "project_id": "my-application-kotlin-fb60a",
+    "storage_bucket": "my-application-kotlin-fb60a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:660450710898:android:a817d4101b6e92fd34f9eb",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "660450710898-b1915hbfr0kjlhq4qunlbi8jn6m6mgso.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHFAGA51ffh-L7Dfv9UBEwGx4sj89zJzc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "660450710898-b1915hbfr0kjlhq4qunlbi8jn6m6mgso.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
