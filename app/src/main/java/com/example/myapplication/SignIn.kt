@@ -40,7 +40,7 @@ class SignIn : AppCompatActivity() {
             if(Email.isNotEmpty() && Password.isNotEmpty() ){
                 AuthFireBase.signInWithEmailAndPassword(Email,Password).addOnCompleteListener(){
                     if(it.isSuccessful){
-                        val intent2=Intent(this,MainActivity::class.java)
+                        val intent2=Intent(this,CustomerActivity::class.java)
                         startActivity(intent2 )
                     }
                     else{
@@ -61,7 +61,7 @@ class SignIn : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         if(AuthFireBase.currentUser!=null){
-            val intent3=Intent(this,MainActivity::class.java)
+            val intent3=Intent(this,CustomerActivity::class.java)
             startActivity(intent3)
         }
     }
