@@ -93,6 +93,8 @@ class SignUp : AppCompatActivity() {
                             val iD=(AuthFireBase.uid).toString()
                             dataBase.child(iD).child("personal info").setValue(user)
 
+                            finish()
+
                             startActivity(intent2)
 
                         }
