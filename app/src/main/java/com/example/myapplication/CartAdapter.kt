@@ -23,6 +23,8 @@ class CartAdapter (private val CartList:ArrayList<Item>):RecyclerView.Adapter<Ca
         holder.itemName.text=currentItem.itemName
         holder.itemPrice.text=currentItem.itemPrice
         holder.itemQuantity.text=currentItem.itemQuantity
+        var sellerId=currentItem.sellerId
+
 
 
     }

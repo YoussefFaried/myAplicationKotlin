@@ -29,6 +29,10 @@ class MyAdapter (private val itemList : ArrayList<Item>): RecyclerView.Adapter<M
         val ID=(AuthFireBase.uid).toString()
 
        val currentItem = itemList[position]
+
+
+
+        var sellerId=currentItem.sellerId
         holder.itemImg.setImageResource(currentItem.itemImg)
         holder.itemName.text=currentItem.itemName
         holder.itemPrice.text=currentItem.itemPrice

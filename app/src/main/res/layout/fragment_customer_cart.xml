@@ -21,7 +21,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.017"
             tools:ignore="MissingConstraints"
-            tools:listitem="@layout/iteeeemcart" />
+            tools:listitem="@layout/iteeeemcart" >
+
+        </androidx.recyclerview.widget.RecyclerView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
@@ -34,15 +36,28 @@
             tools:ignore="MissingConstraints">
 
             <Button
+                android:id="@+id/placeOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Place Order"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.073"
                 app:layout_constraintStart_toStartOf="parent" />
 
+            <Button
+                android:id="@+id/deletecart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="Delete Cart"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.761"
+                app:layout_constraintStart_toEndOf="@+id/placeOrder" />
+
             <TextView
-                android:id="@+id/textView"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="28dp"
@@ -62,7 +77,7 @@
                 android:textSize="25dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.736"
-                app:layout_constraintStart_toEndOf="@+id/textView"
+                app:layout_constraintStart_toEndOf="@+id/placeOrder"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

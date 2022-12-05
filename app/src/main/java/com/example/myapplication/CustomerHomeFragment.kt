@@ -133,8 +133,9 @@ class CustomerHomeFragment : Fragment() {
                 var name=i.child("name").getValue().toString()
                 var price=i.child("price").getValue().toString()
                 var quantity=i.child("quantity").getValue().toString()
+                var sellerId=i.child("sellerId").getValue().toString()
 
-                itemList.add(Item(R.drawable.cheese,name,price,quantity))
+                itemList.add(Item(R.drawable.cheese,name,price,quantity,sellerId))
             }
             val layoutManager=LinearLayoutManager(context)
             recyclerView=view.findViewById(R.id.CustomerHomeRecyclerView)
@@ -212,7 +213,7 @@ class CustomerHomeFragment : Fragment() {
 
 
 
-
+/*
     private fun dataInitilize(){
         itemList= arrayListOf<Item>()
 
@@ -248,4 +249,6 @@ class CustomerHomeFragment : Fragment() {
         }
 
     }
+    */
+
 }
