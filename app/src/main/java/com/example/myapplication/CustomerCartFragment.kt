@@ -1,22 +1,18 @@
 package com.example.myapplication
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.databinding.ActivityCustomerBinding
-import com.example.myapplication.databinding.FragmentCustomerCartBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import android.widget.Toast.makeText as toastMakeText
+import com.google.firebase.database.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,10 +31,15 @@ class CustomerCartFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var CartList:ArrayList<Item>
     private lateinit var customerDb: DatabaseReference
+    private lateinit var sellerDb: DatabaseReference
     private lateinit var itemsDb: DatabaseReference
     private lateinit var AuthFireBase: FirebaseAuth
     private lateinit var order:Button
     private lateinit var delete:Button
+    private lateinit var Binding:ActivityCustomerBinding
+
+
+
 
     private var qua=15000
 
@@ -69,23 +70,51 @@ class CustomerCartFragment : Fragment() {
         order=view.findViewById(R.id.placeOrder)
         delete=view.findViewById(R.id.deletecart)
 
+        var placeOrderTextView=view.findViewById<TextView>(R.id.TotalPrice)
+
+
         customerDb=FirebaseDatabase.getInstance().getReference("Customers")
         itemsDb=FirebaseDatabase.getInstance().getReference("items")
+        sellerDb=FirebaseDatabase.getInstance().getReference("Sellers")
+
+
+
 
         AuthFireBase= FirebaseAuth.getInstance()
         val ID=(AuthFireBase.uid).toString()
 
 
+            Log.d("heheheheh","3222")
+            //placeOrderTextView.setText(customerDb.child(ID).child("cart").child("totalprice"))
+
+            customerDb.child(ID).child("cart").addValueEventListener(object :ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                placeOrderTextView.setText(snapshot.child("totalPrice").getValue().toString())
+                    if(placeOrderTextView.text.toString().equals("null")) {           placeOrderTextView.setText("0")}
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+
+
+
+
+
 
         CartList= arrayListOf<Item>()
-        customerDb.child(ID).child("cart").get().addOnSuccessListener {
+        customerDb.child(ID).child("cart").child("items").get().addOnSuccessListener {
             for (i in it.children){
                 var itemName=i.child("name").getValue().toString()
                 var itemPrice=i.child("price").getValue().toString()
                 var itemQuantity=i.child("quantity").getValue().toString()
                 var sellerId=i.child("sellerId").getValue().toString()
+                var itemId=i.key.toString()
 
-                CartList.add(Item(R.drawable.cheese,itemName,itemPrice,itemQuantity, sellerId ))
+                CartList.add(Item(R.drawable.cheese,itemName,itemPrice,itemQuantity, sellerId,itemId  ))
 
 
             }
@@ -95,21 +124,67 @@ class CustomerCartFragment : Fragment() {
             adapter= CartAdapter(CartList)
             recyclerView.adapter=adapter
         }
+
+
         order.setOnClickListener {
+            Log.d("seeeeee","1")
             for(k in CartList.indices){
-                var itemm = CartList[k].itemName
+                Log.d("seeeeee","2")
+                var itemm = CartList[k].itemId
                 var quan = CartList[k].itemQuantity.toInt()
-                itemsDb.child(itemm).get().addOnSuccessListener {
-                    qua = it.child("quantity").getValue().toString().toInt()
-                    itemsDb.child(itemm).child("quantity").setValue((qua-quan).toString())
+                var sellerid = CartList[k].sellerId
+                itemsDb.child(itemm).get().addOnSuccessListener {task->
+                    Log.d("seeeeee","3")
+
+                    qua = task.child("quantity").getValue().toString().toInt()
+                    Log.d("seeeeee","23")
+                    if(qua-quan==0){
+                        Log.d("seeeeee","4")
+
+                        itemsDb.child(itemm).setValue(null)
+                        sellerDb.child(sellerid).child("items").child(itemm).setValue(null)
+
+                    }
+                    else{
+                        Log.d("seeeeee","5")
+
+                        itemsDb.child(itemm).child("quantity").setValue((qua-quan).toString())
+                        sellerDb.child(sellerid).child("items").child(itemm).child("quantity").setValue((qua-quan).toString())
+                        Log.d("seeeeee","6")
+
+                    }
                 }
             }
+
             customerDb.child(ID).child("cart").setValue(null)
+            itemsDb.addValueEventListener(object :ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val transaction = activity?.supportFragmentManager?.beginTransaction()
+                    transaction?.replace(R.id.CustomerFrameLayout, CustomerHomeFragment())
+                    transaction?.disallowAddToBackStack()
+                    transaction?.commit()
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
 
 
+
+            /*var CustomerActivity=CustomerActivity()
+            CustomerActivity.Cnavbar.selectedItemId=R.id.CustomerHome*/
             }
+
+
         delete.setOnClickListener {
             customerDb.child(ID).child("cart").setValue(null)
+            val transaction = activity?.supportFragmentManager?.beginTransaction()
+            transaction?.replace(R.id.CustomerFrameLayout, CustomerHomeFragment())
+            transaction?.disallowAddToBackStack()
+            transaction?.commit()
         }
 
 

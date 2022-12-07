@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -33,6 +34,7 @@ class CustomerHomeFragment : Fragment() {
     private lateinit var customerDb:DatabaseReference
     private lateinit var sellerDb:DatabaseReference
     private lateinit var itemsDb:DatabaseReference
+    private lateinit var AuthFireBase: FirebaseAuth
 
 
     private lateinit var adapter: MyAdapter
@@ -117,6 +119,9 @@ class CustomerHomeFragment : Fragment() {
         customerDb=FirebaseDatabase.getInstance().getReference("Customers")
         sellerDb=FirebaseDatabase.getInstance().getReference("Sellers")
         itemsDb=FirebaseDatabase.getInstance().getReference("items")
+        AuthFireBase= FirebaseAuth.getInstance()
+        val ID=(AuthFireBase.uid).toString()
+
 
 
 
@@ -127,6 +132,7 @@ class CustomerHomeFragment : Fragment() {
         var flag2=false
 
         itemList= arrayListOf<Item>()
+        customerDb.child(ID).child("cart").child("totalPrice").setValue("0")
 
         itemsDb.get().addOnSuccessListener {
             for(i in it.children){
@@ -134,8 +140,10 @@ class CustomerHomeFragment : Fragment() {
                 var price=i.child("price").getValue().toString()
                 var quantity=i.child("quantity").getValue().toString()
                 var sellerId=i.child("sellerId").getValue().toString()
+                var itemId=i.key.toString()
 
-                itemList.add(Item(R.drawable.cheese,name,price,quantity,sellerId))
+
+                itemList.add(Item(R.drawable.cheese,name,price,quantity,sellerId,itemId))
             }
             val layoutManager=LinearLayoutManager(context)
             recyclerView=view.findViewById(R.id.CustomerHomeRecyclerView)

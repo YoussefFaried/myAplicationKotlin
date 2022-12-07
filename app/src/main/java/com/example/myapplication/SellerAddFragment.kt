@@ -1,31 +1,46 @@
 package com.example.myapplication
 
+import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.app.ProgressDialog
+import android.content.Intent
+import android.net.Uri
+import android.os.Binder
 import android.os.Bundle
+import android.renderscript.ScriptGroup
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.startActivityForResult
+import com.example.myapplication.databinding.FragmentSellerAddBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import java.net.URI
+import java.text.SimpleDateFormat
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SellerAddFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class SellerAddFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentSellerAddBinding
+    lateinit var ImageUri : Uri
+    private lateinit var SellerDB: DatabaseReference
+    private lateinit var itemsDb:DatabaseReference
+    private lateinit var AuthFireBase: FirebaseAuth
+
+
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
 
         }
     }
@@ -34,26 +49,92 @@ class SellerAddFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        SellerDB=FirebaseDatabase.getInstance().getReference("Sellers")
+        itemsDb=FirebaseDatabase.getInstance().getReference("items")
+        binding = FragmentSellerAddBinding.inflate(inflater, container, false)
+        AuthFireBase= FirebaseAuth.getInstance()
+
+        ///////To be used later
+
+
+        binding.SelectImage.setOnClickListener {
+            selectImage()
+
+        }
+        binding.NewItemAddBTN.setOnClickListener {
+            if(binding.NewItemName.text.isEmpty() || binding.NewItemPrice.text.isEmpty() || binding.NewItemQuantity.text.isEmpty()||binding.imageView2.drawable==null ){
+                Toast.makeText(requireActivity(),"Fill all fields",Toast.LENGTH_SHORT).show()
+            }
+            else{
+                uploadImage()
+
+
+            }
+        }
+
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_seller_add, container, false)
+        return binding.root
     }
 
+    private fun selectImage() {
+        val intent=Intent()
+        intent.type="image/*"
+        intent.action=Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, 100)
+    }
+    private fun uploadImage(){
+        val progressDialog=ProgressDialog(requireActivity())
+        progressDialog.setMessage("Uploading File ....")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+        val formatter=SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault())
+        val now=Date()
+        val fileName=formatter.format(now)
+        val storageReference= FirebaseStorage.getInstance().getReference("images/$fileName")
+        storageReference.putFile(ImageUri).addOnSuccessListener {
+            binding.imageView2.setImageURI(null)
+            Toast.makeText(requireActivity(),"Successfully uploaded",Toast.LENGTH_SHORT).show()
+            if(progressDialog.isShowing) progressDialog.dismiss()
+            SellerDB.child(AuthFireBase.uid.toString()).child("items").child(fileName.toString()).child("name").setValue(binding.NewItemName.text.toString())
+            SellerDB.child(AuthFireBase.uid.toString()).child("items").child(fileName.toString()).child("price").setValue(binding.NewItemPrice.text.toString())
+            SellerDB.child(AuthFireBase.uid.toString()).child("items").child(fileName.toString()).child("quantity").setValue(binding.NewItemQuantity.text.toString())
+
+            itemsDb.child(fileName.toString()).child("name").setValue(binding.NewItemName.text.toString())
+            itemsDb.child(fileName.toString()).child("price").setValue(binding.NewItemPrice.text.toString())
+            itemsDb.child(fileName.toString()).child("quantity").setValue(binding.NewItemQuantity.text.toString())
+            itemsDb.child(fileName.toString()).child("sellerId").setValue(AuthFireBase.uid.toString())
+
+
+
+
+
+
+        }.addOnFailureListener{
+            if(progressDialog.isShowing) progressDialog.dismiss()
+            Toast.makeText(requireActivity(),"Failed",Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode==100 && resultCode== RESULT_OK){
+            ImageUri=data?.data!!
+            binding.imageView2.setImageURI(ImageUri)
+
+
+        }
+    }
+
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SellerAddFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
         fun newInstance(param1: String, param2: String) =
             SellerAddFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
                 }
             }
     }

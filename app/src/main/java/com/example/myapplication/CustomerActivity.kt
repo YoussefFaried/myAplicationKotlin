@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentController
 import androidx.navigation.NavController
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 
 import com.example.myapplication.databinding.ActivityCustomerBinding
 import com.example.myapplication.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 
 class CustomerActivity : AppCompatActivity() {
@@ -33,6 +35,12 @@ class CustomerActivity : AppCompatActivity() {
         setContentView(Binding.root)
         ReplaceFragment(CustomerHomeFragment())
 
+        var Cnavbar=Binding.CustomerNavBar
+
+
+
+
+
 
         Binding.CustomerNavBar.setOnItemSelectedListener {
             when(it.itemId){
@@ -43,6 +51,8 @@ class CustomerActivity : AppCompatActivity() {
 
             true
         }
+
+
 
 
 

@@ -8,9 +8,6 @@
     android:layout_marginVertical="5dp"
     >
 
-
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +17,7 @@
         android:gravity="center"
         >
         <ImageView
-            android:id="@+id/cartItemImageView"
+            android:id="@+id/updateItemImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/cheese"
@@ -31,42 +28,64 @@
 
         <LinearLayout
             android:layout_width="120dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/cartItemName"
+            <EditText
+                android:id="@+id/updateItemName"
                 android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:text="Cheese"
-                android:textSize="30dp"
+                android:textSize="15dp"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="0dp"
                 android:gravity="center"/>
-            <TextView
-                android:id="@+id/cartItemPrice"
+            <EditText
+                android:id="@+id/updateItemPrice"
                 android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:text="30LE"
-                android:textSize="20dp"
+                android:textSize="15dp"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="0dp"
                 android:gravity="center"/>
-            <TextView
-                android:id="@+id/cartItemQuantity"
+            <EditText
+                android:id="@+id/updateItemQuantity"
                 android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="20dp"
+                android:layout_height="40dp"
+                android:text="1"
+                android:textSize="15dp"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="0dp"
                 android:gravity="center"/>
+
 
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
 
+            tools:ignore="MissingConstraints"
+            android:gravity="center"
+            >
+        <Button
+            android:id="@+id/sellerUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            android:text="Update"
 
+            />
 
-
+        <Button
+            android:enabled="false"
+            android:id="@+id/sellerSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            android:text="Save" />
+        </LinearLayout>
 
 
     </LinearLayout>
