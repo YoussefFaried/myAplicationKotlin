@@ -12,8 +12,5 @@
         />
 
 
-    <item android:title="Profile"
-        android:id="@+id/SellerProfile"
-        android:icon="@drawable/ic_baseline_person_24"
-        />
+
 </menu>

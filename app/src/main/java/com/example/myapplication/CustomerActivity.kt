@@ -46,7 +46,7 @@ class CustomerActivity : AppCompatActivity() {
             when(it.itemId){
                 R.id.CustomerHome->ReplaceFragment(CustomerHomeFragment())
                 R.id.CustomerCart->ReplaceFragment(CustomerCartFragment())
-                R.id.CustomerProfile->ReplaceFragment(ProfileFragment())
+
             }
 
             true
