@@ -2,7 +2,6 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,37 +9,49 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.example.myapplication.databinding.ActivityProfileBinding
 import com.example.myapplication.databinding.FragmentProfileBinding
+import com.example.myapplication.databinding.FragmentSellerProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class ProfileFragment : Fragment() {
-    private lateinit var Binding: FragmentProfileBinding
+class SellerProfileFragment : Fragment() {
+    private lateinit var Binding: FragmentSellerProfileBinding
     private lateinit var AuthFireBase: FirebaseAuth
     private lateinit var dataBase: DatabaseReference
     private lateinit var CustomerDB: DatabaseReference
     private lateinit var SellerDB: DatabaseReference
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Binding= FragmentSellerProfileBinding.inflate(layoutInflater)
+
+        AuthFireBase= FirebaseAuth.getInstance()
 
 
-        // Inflate the SellerProfile.xml for this fragment
-        Binding= FragmentProfileBinding.inflate(layoutInflater)
+        ///////To be used later
         val ID=(AuthFireBase.uid).toString()
 
-        CustomerDB=FirebaseDatabase.getInstance().getReference("Customers")
-        SellerDB=FirebaseDatabase.getInstance().getReference("Sellers")
+        data class User(val firstname:String?=null ,val lastname:String?=null,val age:String?=null,val phone:String?=null)
+        //////
+
+
+
+        //////retrieving data from database
+        //////the user personal info will be found if he has updated his profile once at least after signing up
+
+        CustomerDB= FirebaseDatabase.getInstance().getReference("Customers")
+        SellerDB= FirebaseDatabase.getInstance().getReference("Sellers")
         var found=false
         CustomerDB.get().addOnSuccessListener {
             for(i in it.children){
@@ -75,35 +86,31 @@ class ProfileFragment : Fragment() {
         }
 
 
+
+
+
+
+
+
+
+        ///////eventlisteners
+
+
+
+
+
+        // Inflate the layout for this fragment
+
         return Binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        CustomerDB=FirebaseDatabase.getInstance().getReference("Customers")
-        SellerDB=FirebaseDatabase.getInstance().getReference("Sellers")
-        var found=false
-        AuthFireBase= FirebaseAuth.getInstance()
-        val ID=(AuthFireBase.uid).toString()
-        CustomerDB.get().addOnSuccessListener {
-            for(i in it.children){
-                if((i.key).toString()==ID){
-                    Log.d("hah","Customer")
+    companion object {
 
-                    found=true
+        fun newInstance(param1: String, param2: String) =
+            SellerProfileFragment().apply {
+                arguments = Bundle().apply {
 
                 }
             }
-        }
-        Log.d("hah","hehe")
-        if(found){
-            Log.d("hah","hoho")
-            CustomerDB.child(ID).child("found").setValue("yes")
-        }
-
     }
-
-
-
-
 }

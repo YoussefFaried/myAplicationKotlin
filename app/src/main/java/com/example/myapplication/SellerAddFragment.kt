@@ -73,7 +73,7 @@ class SellerAddFragment : Fragment() {
         }
 
 
-        // Inflate the layout for this fragment
+        // Inflate the SellerProfile.xml for this fragment
         return binding.root
     }
 

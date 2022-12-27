@@ -46,6 +46,7 @@ class CustomerActivity : AppCompatActivity() {
             when(it.itemId){
                 R.id.CustomerHome->ReplaceFragment(CustomerHomeFragment())
                 R.id.CustomerCart->ReplaceFragment(CustomerCartFragment())
+                R.id.CustomerProfile->ReplaceFragment(ProfileFragment())
 
             }
 
@@ -71,6 +72,7 @@ class CustomerActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_menu,menu)
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -81,6 +83,11 @@ class CustomerActivity : AppCompatActivity() {
                 AuthFireBase.signOut()
                 val intentBack= Intent(this,SignIn::class.java)
                 startActivity(intentBack)
+            }
+            R.id.itemHelp->{
+                finish()
+                val intentVoice= Intent(this,Voice::class.java)
+                startActivity(intentVoice)
             }
         }
         return super.onOptionsItemSelected(item)

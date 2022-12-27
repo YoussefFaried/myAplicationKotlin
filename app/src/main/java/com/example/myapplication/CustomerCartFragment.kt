@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +39,7 @@ class CustomerCartFragment : Fragment() {
     private lateinit var order:Button
     private lateinit var delete:Button
     private lateinit var Binding:ActivityCustomerBinding
+    private var sellerHashSet= mutableSetOf<String>()
 
 
 
@@ -70,7 +73,11 @@ class CustomerCartFragment : Fragment() {
         order=view.findViewById(R.id.placeOrder)
         delete=view.findViewById(R.id.deletecart)
 
-        var placeOrderTextView=view.findViewById<TextView>(R.id.TotalPrice)
+        var placeOrderTextView=view.findViewById<TextView>(R.id.itemspricenum)
+        var itemsPrice=view.findViewById<TextView>(R.id.itemspricenum)
+        var deliveryPrice=view.findViewById<TextView>(R.id.deliverycostnum)
+        var totalPrice=view.findViewById<TextView>(R.id.totalpricenum)
+        var delivery=0.0
 
 
         customerDb=FirebaseDatabase.getInstance().getReference("Customers")
@@ -84,21 +91,49 @@ class CustomerCartFragment : Fragment() {
         val ID=(AuthFireBase.uid).toString()
 
 
-            Log.d("heheheheh","3222")
-            //placeOrderTextView.setText(customerDb.child(ID).child("cart").child("totalprice"))
+        Log.d("heheheheh","3222")
+        //placeOrderTextView.setText(customerDb.child(ID).child("cart").child("totalprice"))
 
-            customerDb.child(ID).child("cart").addValueEventListener(object :ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
+        customerDb.child(ID).child("cart").addValueEventListener(object :ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
                 placeOrderTextView.setText(snapshot.child("totalPrice").getValue().toString())
-                    if(placeOrderTextView.text.toString().equals("null")) {           placeOrderTextView.setText("0")}
+                if(placeOrderTextView.text.toString().equals("null")) {           placeOrderTextView.setText("0")}
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+        customerDb.child(ID).get().addOnSuccessListener {
+            var myX=it.child("location").child("x").getValue().toString().toDouble()
+            var myY=it.child("location").child("y").getValue().toString().toDouble()
+            customerDb.child(ID).child("cart").child("items").get().addOnSuccessListener {
+
+                for(i in it.children){
+                    sellerHashSet.add(i.child("sellerId").getValue().toString())
+                    Log.d("hehe","555")
 
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+                sellerDb.get().addOnSuccessListener {
+                    for (j in it.children){
+                        if(sellerHashSet.contains(j.key.toString()) && j.hasChild("location")){
+                            var hisX=j.child("location").child("x").getValue().toString().toDouble()
+                            var hisY=j.child("location").child("y").getValue().toString().toDouble()
+                            var distance=distanceInKm(myX,myY,hisX,hisY)
+                            var deliverySpecific=(distance*10).toInt()
+                            delivery+=deliverySpecific
+                        }
+                    }
+                    deliveryPrice.text=delivery.toString()
                 }
 
-            })
+            }
+
+
+        }
+
 
 
 
@@ -135,10 +170,17 @@ class CustomerCartFragment : Fragment() {
                 var sellerid = CartList[k].sellerId
                 itemsDb.child(itemm).get().addOnSuccessListener {task->
                     Log.d("seeeeee","3")
+                    qua=-1
+                    if(task.hasChild(itemm)){
+                        qua = task.child("quantity").getValue().toString().toInt()
+                    }
 
-                    qua = task.child("quantity").getValue().toString().toInt()
                     Log.d("seeeeee","23")
-                    if(qua-quan==0){
+
+                    if(qua==-1||(qua<quan)){
+                        Toast.makeText(requireActivity(),"Some items are out of stock",Toast.LENGTH_SHORT).show()
+                    }
+                    else if(qua-quan==0){
                         Log.d("seeeeee","4")
 
                         itemsDb.child(itemm).setValue(null)
@@ -176,7 +218,7 @@ class CustomerCartFragment : Fragment() {
 
             /*var CustomerActivity=CustomerActivity()
             CustomerActivity.Cnavbar.selectedItemId=R.id.CustomerHome*/
-            }
+        }
 
 
         delete.setOnClickListener {
@@ -187,10 +229,46 @@ class CustomerCartFragment : Fragment() {
             transaction?.commit()
         }
 
+        deliveryPrice.addTextChangedListener {
+            if(deliveryPrice.text.isNotEmpty()&& itemsPrice.text.isNotEmpty()){
+                totalPrice.text=(deliveryPrice.text.toString().toDouble()+itemsPrice.text.toString().toDouble()).toString()
+            }
+        }
+
 
 
 
     }
+    private fun deg2rad(deg: Double): Double {
+        return deg * Math.PI / 180.0
+    }
+
+    private fun rad2deg(rad: Double): Double {
+        return rad * 180.0 / Math.PI
+    }
+    fun distanceInKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val theta = lon1 - lon2
+        var dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta))
+        dist = Math.acos(dist)
+        dist = rad2deg(dist)
+        dist = dist * 60 * 1.1515
+        dist = dist * 1.609344
+        return dist
+    }
+    fun distance(lat_a: Double, lng_a: Double, lat_b: Double, lng_b: Double): Double {
+        val earthRadius = 3958.75
+        val latDiff = Math.toRadians((lat_b - lat_a).toDouble())
+        val lngDiff = Math.toRadians((lng_b - lng_a).toDouble())
+        val a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+                Math.cos(Math.toRadians(lat_a.toDouble())) * Math.cos(Math.toRadians(lat_b.toDouble())) *
+                Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        val distance = earthRadius * c
+        val meterConversion = 1609
+        return (distance * meterConversion.toFloat()).toDouble()
+    }
+
+
 
 
 

@@ -8,22 +8,12 @@
         android:icon="@drawable/ic_baseline_refresh_24"
         app:showAsAction="ifRoom"
         />
-    <item android:id="@+id/itemAddMarker"
-        android:title="Add marker"
-        android:icon="@drawable/ic_baseline_add_location_24"
-        app:showAsAction="never"
-        />
-    <item android:id="@+id/itemmyMarks"
-        android:title="Show your markers"
-        android:icon="@drawable/ic_baseline_add_location_24"
-        app:showAsAction="never"
-        />
     <item android:id="@+id/itemSave"
-        android:title="Save your markers"
+        android:title="Refresh"
         android:icon="@drawable/ic_baseline_save_24"
-        app:showAsAction="never"
-
+        app:showAsAction="ifRoom"
         />
+
 
 
 </menu>

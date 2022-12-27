@@ -11,6 +11,11 @@
         android:id="@+id/CustomerCart"
         android:icon="@drawable/ic_baseline_shopping_cart_24"
         app:showAsAction="always"/>
+    <item android:title="Profile"
+        android:id="@+id/CustomerProfile"
+        android:icon="@drawable/ic_baseline_person_24"
+        app:showAsAction="always"
+        />
 
 
 

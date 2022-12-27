@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso
 
 class CartAdapter (private val CartList:ArrayList<Item>):RecyclerView.Adapter<CartAdapter.cartViewHolder>(){
     var totalPrice=0
+    var deliverycost=0
     private lateinit var customerDb:DatabaseReference
     private lateinit var AuthFireBase:FirebaseAuth
     private lateinit var StorageRef: StorageReference

@@ -73,7 +73,7 @@ class CustomerHomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        // Inflate the SellerProfile.xml for this fragment
         return inflater.inflate(R.layout.fragment_customer_home, container, false)
     }
 

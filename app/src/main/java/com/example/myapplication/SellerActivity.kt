@@ -27,6 +27,8 @@ class SellerActivity : AppCompatActivity() {
             when(it.itemId){
                 R.id.SellerHome->ReplaceFragment(SellerHomeFragment())
                 R.id.SellerAddItem->ReplaceFragment((SellerAddFragment()))
+                R.id.SellerProfile->ReplaceFragment(SellerProfileFragment())
+
             }
             true
         }

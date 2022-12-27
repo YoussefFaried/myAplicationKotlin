@@ -52,8 +52,10 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
 
     ///check if the add marker button in the menu is selected or not
     private var addMarkerButton=false
-    private var arrayListOfMarks=ArrayList<LatLng>()
+    private var myLoc: LatLng? =null
     private var arrayListOfMarksinDB=ArrayList<LatLng>()
+    private var flag=false
+    private var myLocMarker=null
 
 
     data class myMark(val x:Double?=null ,val y:Double?=null)
@@ -72,8 +74,7 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
         customerDataBase=FirebaseDatabase.getInstance().getReference("Customers")
 
 
-        ///check if the User is found on the real time database
-        ///he will be found if he has updated his profile and chose if he is a customer or seller
+/*
         customerDataBase.get().addOnSuccessListener {
             for(i in it.children){
                 if((i.key).toString()==ID){
@@ -105,7 +106,7 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
                     }
                 }
             }
-        }
+        }*/
 
 
         ///to check if the user has enabled GPS or not
@@ -116,13 +117,19 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
         gpsStatus=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         fusedLocationProviderClient=LocationServices.getFusedLocationProviderClient(this)
         if(!gpsStatus){
-            Toast.makeText(this,"You need to enable GPS first",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,"You need to enable GPS first",Toast.LENGTH_LONG).show()
             val intent=Intent(this,MainActivity::class.java)
             startActivity(intent)
             finish()
         }
         else{val mapFragment=supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-            mapFragment.getMapAsync(this)}
+            mapFragment.getMapAsync(this)
+            Toast.makeText(this,"Click on map to select your location",Toast.LENGTH_LONG).show()
+        }
+
+
+
+
     }
 
 
@@ -133,6 +140,54 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
         myMap.uiSettings.isMyLocationButtonEnabled=true
         setUpMap()
         Log.d("hah","hhh1")
+        customerDataBase.get().addOnSuccessListener {
+            if (it.hasChild(ID.toString())){
+                sellerDataBase.get().addOnSuccessListener {
+                    for(i in it.children){
+                        if(i.hasChild("location")){
+                            var x=i.child("location").child("x").getValue().toString().toDouble()
+                            var y=i.child("location").child("y").getValue().toString().toDouble()
+                            var marketPosition=LatLng(x,y)
+                            myMap.addMarker(MarkerOptions().position(marketPosition)).title=i.child("personal info").child("firstname").getValue().toString()
+
+
+
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        myMap.setOnMapClickListener {
+            flag=true
+            if(myLoc!=null){
+                myMap.clear()
+                customerDataBase.get().addOnSuccessListener {
+                    if (it.hasChild(ID.toString())){
+                        sellerDataBase.get().addOnSuccessListener {
+                            for(i in it.children){
+                                if(i.hasChild("location")){
+                                    var x=i.child("location").child("x").getValue().toString().toDouble()
+                                    var y=i.child("location").child("y").getValue().toString().toDouble()
+                                    var marketPosition=LatLng(x,y)
+                                    myMap.addMarker(MarkerOptions().position(marketPosition)).tag=i.child("personal info").child("firstname").getValue().toString()
+
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            myMap.addMarker(MarkerOptions().position(it))
+            myLoc=it
+            //arrayListOfMarks.add(it)
+            //myMap.setOnMapClickListener (null)
+            Log.d("hehe","1")
+        }
 
 
 
@@ -172,7 +227,7 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
                 currentLocation = it
                 val coordinates = LatLng(currentLocation.latitude, currentLocation.longitude)
                 val mark1 = MarkerOptions().position(coordinates)
-                myMap.addMarker(mark1)
+                //myMap.addMarker(mark1)
                 myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinates,16f))
 
             }
@@ -194,8 +249,10 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
         when(item.itemId){
             R.id.itemRefresh->{
                 finish()
+                Log.d("hehe","2")
                 startActivity(getIntent())
             }
+            /*
             R.id.itemAddMarker->{
                 if(!addMarkerButton){
                     Toast.makeText(this,"Click on map to add marker",Toast.LENGTH_LONG).show()
@@ -212,22 +269,32 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
                     myMap.setOnMapClickListener (null)
                 }
 
-            }
+            }*/
             R.id.itemSave->{
-                if (!found){
-                    Toast.makeText(this,"Please update your profile to be able to save your marks",Toast.LENGTH_SHORT).show()
+                if(!flag){
+                    Toast.makeText(this,"Please select location",Toast.LENGTH_SHORT).show()
+                    Log.d("hehe","3")
                 }
                 else{
-                    var j=markCount+1
-                    for(i in arrayListOfMarks){
-                        var Mark=myMark(i.latitude,i.longitude)
-                        database.child(ID.toString()).child("saved marks").child("mark"+j).setValue(Mark)
-                        j += 1
+                    sellerDataBase.get().addOnSuccessListener {
+                        if (it.hasChild(ID.toString())){
+                            sellerDataBase.child(ID.toString()).child("location").child("x").setValue(myLoc?.latitude)
+                            sellerDataBase.child(ID.toString()).child("location").child("y").setValue(myLoc?.longitude)
+                            startActivity(Intent(this,SellerActivity::class.java))
+                        }
                     }
-                }
+                    customerDataBase.get().addOnSuccessListener {
+                        if (it.hasChild(ID.toString())){
+                            customerDataBase.child(ID.toString()).child("location").child("x").setValue(myLoc?.latitude)
+                            customerDataBase.child(ID.toString()).child("location").child("y").setValue(myLoc?.longitude)
+                            startActivity(Intent(this,CustomerActivity::class.java))
+                        }
+                    }
 
+                }
             }
-            R.id.itemmyMarks->{
+
+            /*R.id.itemmyMarks->{
                 if(found){
                     database.child(ID.toString()).child("saved marks").get().addOnSuccessListener {
                         for(i in it.children){
@@ -243,6 +310,7 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
 
 
             }
+            */
         }
         return super.onOptionsItemSelected(item)
     }

@@ -97,8 +97,15 @@ class SignIn : AppCompatActivity() {
                 for (i in it.children){
                     if(i.key.toString()==id){
                         val intentSeller=Intent(this,SellerActivity::class.java)
+                        val intentMap=Intent(this,Map::class.java)
                         finish()
-                        startActivity(intentSeller)
+                        if(i.hasChild("location")){
+                            startActivity(intentSeller)
+                        }
+                        else{
+                            startActivity(intentMap)
+                        }
+
                     }
                 }
             }
@@ -107,8 +114,15 @@ class SignIn : AppCompatActivity() {
                 for (i in it.children){
                     if(i.key.toString()==id){
                         val intentCustomer=Intent(this,CustomerActivity::class.java)
+                        val intentMap=Intent(this,Map::class.java)
                         finish()
-                        startActivity(intentCustomer)
+                        if(i.hasChild("location")){
+                            startActivity(intentCustomer)
+                        }
+                        else{
+                            startActivity(intentMap)
+                        }
+
                     }
                 }
             }

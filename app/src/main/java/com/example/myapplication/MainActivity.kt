@@ -7,6 +7,8 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.app.ActivityCompat
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -30,20 +32,10 @@ class MainActivity : AppCompatActivity() {
         locationManager= context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         gpsStatus=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
-        Binding.TextView.text=gpsStatus.toString()
 
 
 
 
-        Binding.SignOutButton.setOnClickListener {
-            AuthFireBase.signOut()
-            val intentSignOut= Intent(this,SignIn::class.java)
-            startActivity(intentSignOut)
-        }
-        Binding.ProfileButton.setOnClickListener{
-            val intentProfile=Intent(this,Profile::class.java)
-            startActivity(intentProfile)
-        }
 
         Binding.MapsButton.setOnClickListener{
 
@@ -59,7 +51,24 @@ class MainActivity : AppCompatActivity() {
             */
         }
 
-        val ID=(AuthFireBase.uid).toString()
-        Binding.textView2.text=ID
+
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.top_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.itemExitApp -> {
+                finish()
+                AuthFireBase.signOut()
+                val intentBack= Intent(this,SignIn::class.java)
+                startActivity(intentBack)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
