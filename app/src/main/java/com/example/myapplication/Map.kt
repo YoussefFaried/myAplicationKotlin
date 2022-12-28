@@ -281,6 +281,7 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
                             sellerDataBase.child(ID.toString()).child("location").child("x").setValue(myLoc?.latitude)
                             sellerDataBase.child(ID.toString()).child("location").child("y").setValue(myLoc?.longitude)
                             startActivity(Intent(this,SellerActivity::class.java))
+                            finish()
                         }
                     }
                     customerDataBase.get().addOnSuccessListener {
@@ -288,6 +289,7 @@ class Map : AppCompatActivity(),OnMapReadyCallback {
                             customerDataBase.child(ID.toString()).child("location").child("x").setValue(myLoc?.latitude)
                             customerDataBase.child(ID.toString()).child("location").child("y").setValue(myLoc?.longitude)
                             startActivity(Intent(this,CustomerActivity::class.java))
+                            finish()
                         }
                     }
 

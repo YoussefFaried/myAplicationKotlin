@@ -168,17 +168,18 @@ class CustomerCartFragment : Fragment() {
                 var itemm = CartList[k].itemId
                 var quan = CartList[k].itemQuantity.toInt()
                 var sellerid = CartList[k].sellerId
+                var itemName=CartList[k].itemName
                 itemsDb.child(itemm).get().addOnSuccessListener {task->
                     Log.d("seeeeee","3")
-                    qua=-1
-                    if(task.hasChild(itemm)){
+                    qua=-10
+                    if(task.exists()){
                         qua = task.child("quantity").getValue().toString().toInt()
                     }
 
                     Log.d("seeeeee","23")
 
-                    if(qua==-1||(qua<quan)){
-                        Toast.makeText(requireActivity(),"Some items are out of stock",Toast.LENGTH_SHORT).show()
+                    if(qua==-10||(qua<quan)){
+                        Toast.makeText(requireActivity(),itemName+" is out of stock",Toast.LENGTH_SHORT).show()
                     }
                     else if(qua-quan==0){
                         Log.d("seeeeee","4")

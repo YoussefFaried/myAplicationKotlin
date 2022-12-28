@@ -4,11 +4,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
+import androidx.appcompat.view.menu.MenuView
 import androidx.fragment.app.Fragment
 import com.example.myapplication.databinding.ActivityCustomerBinding
 import com.example.myapplication.databinding.ActivitySellerBinding
 import com.google.firebase.auth.FirebaseAuth
+import android.view.MenuItem as MenuItem1
+import android.view.MenuItem as MenuItem2
 
 class SellerActivity : AppCompatActivity() {
     private lateinit var Binding: ActivitySellerBinding
@@ -45,10 +47,12 @@ class SellerActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_menu,menu)
+        var help= menu?.findItem(R.id.itemHelp)
+        help?.setVisible(false)
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem2): Boolean {
         when(item.itemId) {
             R.id.itemExitApp -> {
                 AuthFireBase.signOut()
